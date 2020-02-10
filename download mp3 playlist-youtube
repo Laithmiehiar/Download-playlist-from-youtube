@@ -1,0 +1,24 @@
+set question to display dialog "Youtube URL to fetch?" default answer "" buttons {"Cancel", "Open in Browser", "Download"} default button 3
+set pageURL to (text returned of result)
+if pageURL is "" then return "No URL"
+set question2 to display dialog "Location to save /Documents/Songs/?" default answer "" buttons {"Cancel", "Ok"} default button 2
+set choice to (button returned of question)
+set location to (text returned of question2)
+set progress description to "Downloading video..."
+
+if choice is "Download" then
+	try
+		set pid to do shell script "cd ~/Documents/songs/" & location & "; /usr/local/bin/youtube-dl --newline -x --audio-format mp3 " & pageURL & " > ~/Documents/Songs/log 2>&1 & echo $!"
+		delay 1
+	on error
+		display dialog "Download complete!" -- eh, success, hopefully :) 
+		set progress description to "Done!"
+	end try
+	
+else if choice is "Open in Browser" then
+	try
+		open location pageURL
+	on error
+		display dialog "Cannot open " + pageURL + " !"
+	end try
+end if
